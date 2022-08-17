@@ -7,8 +7,10 @@ export interface CellProps {
   row: number;
 }
 
+import headerImgUrl from "#src/assets/png/plus.png";
+
 export const AddButton = styled.button`
-  background-image: url("#src/assets/png/plus.png");
+  background-image: url(${headerImgUrl});
   position: absolute;
   right: -8px;
   z-index: 10;
@@ -26,6 +28,7 @@ export const AddButton = styled.button`
   visibility: hidden;
   opacity: 0;
   transition: opacity 300ms ease;
+  border-width: 0;
 `;
 
 export const Cell = styled.div<CellProps>`
@@ -163,4 +166,32 @@ export const TaskState = styled.div`
   font-size: 12px;
   line-height: 22px;
   letter-spacing: 0.25px;
+`;
+
+export const ExtInfo = styled.div`
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+`;
+
+export const ExtInfoItem = styled.div<{ type: "final" | "auto" }>`
+  background: ${(p) => p.theme.color.grey01};
+  height: 16px;
+  border-radius: 32px;
+  padding: 0 6px;
+  width: auto;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 10px;
+  line-height: 16px;
+  &:last-child {
+    margin-top: 9px;
+  }
+
+  color: ${(p) =>
+    p.type === "final" ? p.theme.color.brightRed : p.theme.color.green};
 `;

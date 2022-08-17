@@ -23,14 +23,12 @@ module.exports = {
     // return the customized config
     return mergeConfig(config, {
       // customize the Vite config here
-
-
       resolve: {
         alias: {
           '#src': resolve(__dirname, '../src'),
         },
       },
-
+      assetsInclude: ['**/*.png']
     });
   },
 }

@@ -1,4 +1,4 @@
-import { HTMLAttributes, useCallback, useMemo, useRef } from "react";
+import React, { HTMLAttributes, useCallback, useMemo, useRef } from "react";
 import { getTaskState } from "#src/tools/get-task-state";
 import moment from "moment";
 import { TASK_STATE } from "#src/constants/task";
@@ -8,6 +8,8 @@ import {
   AddButton,
   Cell,
   Executor,
+  ExtInfo,
+  ExtInfoItem,
   FirstRow,
   Point,
   Task,
@@ -29,8 +31,8 @@ export interface TaskProps extends HTMLAttributes<HTMLDivElement> {
   onDelete?: (id: number) => void;
   onMenuButtonClick?: (id: number) => void;
   onAddNewTask?: (id: number) => void;
-  onChangeTaskFinal?: (id: number) => void;
-  onChangeTaskAuto?: (id: number) => void;
+  onChangeTaskFinal?: (id: number, value: boolean) => void;
+  onChangeTaskAuto?: (id: number, value: boolean) => void;
 }
 
 export function SchemaTask(props: TaskProps) {
@@ -74,15 +76,6 @@ export function SchemaTask(props: TaskProps) {
     }
   }, [node]);
 
-  const style = useMemo(() => {
-    return {
-      width: "100%",
-      height: "100%",
-      gridColumnStart: horizontalProcess ? node.weight + 1 : node.rowNumber + 1,
-      gridRowStart: horizontalProcess ? node.rowNumber + 1 : node.weight + 1,
-    };
-  }, [node, horizontalProcess]);
-
   const state = useMemo(() => {
     const isExpired =
         node &&
@@ -95,22 +88,13 @@ export function SchemaTask(props: TaskProps) {
       : { isExpired, ..._state };
   }, [node]);
 
-  const onTaskClick = (e) => {
-    if (e.target.closest(".task-button__add-new-task")) return;
+  const handleTaskClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.currentTarget.closest(".task-button__add-new-task")) return;
 
     onSelectNode?.(node.id);
   };
 
-  const taskClass = useMemo(() => {
-    return (
-      "process-schema__task unselectable" +
-      (node.disabled
-        ? " _disabled"
-        : (active ? " _active" : "") + (state.isExpired ? " _expired" : ""))
-    );
-  }, [node, active]);
-
-  const onMenuButtonClick = (e) => {
+  const handleMenuButtonDown = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (props.onMenuButtonClick) {
       e.stopPropagation();
       props.onMenuButtonClick(node.id);
@@ -126,9 +110,11 @@ export function SchemaTask(props: TaskProps) {
       return {
         left: setToLeftBorder
           ? ""
-          : taskRef?.current?.offsetWidth + 10 + taskRef.current.offsetLeft,
-        right: setToLeftBorder ? taskRef.current.offsetLeft + 40 : "",
-        top: taskRef.current.offsetTop,
+          : (taskRef?.current?.offsetWidth || 0) +
+            10 +
+            (taskRef?.current?.offsetLeft || 0),
+        right: setToLeftBorder ? (taskRef?.current?.offsetLeft || 0) + 40 : "",
+        top: taskRef?.current?.offsetTop || 0,
       };
     }
   }, [menuTaskId]);
@@ -143,10 +129,9 @@ export function SchemaTask(props: TaskProps) {
         expired={state.isExpired}
         disabled={node.disabled}
         active={active}
-        // className={taskClass}
         ref={taskRef}
         id={"js-task_" + node.id}
-        onClick={onTaskClick}
+        onClick={handleTaskClick}
         onDoubleClick={editTask}
       >
         <FirstRow>
@@ -156,26 +141,22 @@ export function SchemaTask(props: TaskProps) {
               {new Date(node.dueDate).toLocaleDateString("ru-RU")}
             </div>
           )}
-          <TaskButton onMouseDown={onMenuButtonClick}>
+          <TaskButton onMouseDown={handleMenuButtonDown}>
             <Point />
             <Point />
             <Point />
           </TaskButton>
         </FirstRow>
         <TaskName>{node.name}</TaskName>
-        <Executor className="task__executor _black">
-          {node.executorName ? node.executorName : ""}
-        </Executor>
+        <Executor>{node.executorName ? node.executorName : ""}</Executor>
         <TaskState className={`task-state ${state.css}`}>
           {state.caption}
         </TaskState>
         {!node.disabled && !node.isFinal && <AddButton onClick={addNewTask} />}
-        <div className="task__ext-info">
-          {node.isFinal && (
-            <div className="ext-info__item _final">Конечная</div>
-          )}
-          {node.isAutomatic && <div className="ext-info__item _auto">Авто</div>}
-        </div>
+        <ExtInfo>
+          {node.isFinal && <ExtInfoItem type={"final"}>Конечная</ExtInfoItem>}
+          {node.isAutomatic && <ExtInfoItem type={"auto"}>Авто</ExtInfoItem>}
+        </ExtInfo>
       </Task>
       {menuTaskId === node.id && (
         <ActionMenu

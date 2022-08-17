@@ -34,6 +34,7 @@ const MenuItem = styled.div`
 
 export type MenuPosition = {
   left: number | string;
+  right: number | string;
   top: number | string;
 };
 
