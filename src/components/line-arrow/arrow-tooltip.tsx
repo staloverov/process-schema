@@ -1,54 +1,52 @@
-import React, { useState } from "react";
-import Bucket from "tt-assets/svg/bucket.svg";
-import ConditionEditor from "./condition-editor";
+import React, { HTMLAttributes, useState } from "react";
+import { ReactComponent as Bucket } from "#src/assets/svg/bucket.svg";
+import { ConditionEditor } from "./condition-editor";
+import { Tooltip, TooltipButton } from "./styled";
 
-type Props = {
-  onDeleteArrow: Function;
-  onApplyCondition: Function;
+export interface ArrowTooltipProps extends HTMLAttributes<HTMLDivElement> {
+  onDeleteArrow: () => void;
+  onApplyCondition: (value: string) => void;
   hasCondition: boolean;
   condition: string;
   disabled: boolean;
-};
+}
 
-export default function ArrowTooltip(props: Props) {
-  const [editorVisible, setEditorVisible] = useState(false);
-  const { hasCondition, onDeleteArrow, onApplyCondition, condition, disabled } =
-    props;
+export const ArrowTooltip = ({
+  condition,
+  hasCondition,
+  disabled,
+  onDeleteArrow,
+  onApplyCondition,
+}: ArrowTooltipProps) => {
+  const [editorVisible, setEditorVisible] = useState<boolean>(false);
 
   const toggleEditorVisible = () => {
     if (!disabled) setEditorVisible(!editorVisible);
   };
 
-  const applyCondition = (e) => {
-    onApplyCondition(e);
+  const handleApplyCondition = (value: string) => {
+    onApplyCondition(value);
     setEditorVisible(false);
   };
 
   return (
-    <div
-      className={
-        "x-arrow__tooltip" + (hasCondition ? " _with-condition" : " _default")
-      }
-    >
+    <Tooltip hasCondition={hasCondition}>
       <div className="x-arrow__tooltip-buttons-block">
-        <button className="x-arrow__tooltip-button" onClick={onDeleteArrow}>
+        <TooltipButton onClick={onDeleteArrow}>
           <Bucket />
-        </button>
-        <button
-          className={"x-arrow__tooltip-button" + (disabled ? " _disabled" : "")}
-          onClick={toggleEditorVisible}
-        >
+        </TooltipButton>
+        <TooltipButton disabled onClick={toggleEditorVisible}>
           if
-        </button>
+        </TooltipButton>
       </div>
 
       {editorVisible && (
         <ConditionEditor
           value={condition}
-          onApply={applyCondition}
+          onApply={handleApplyCondition}
           onClose={toggleEditorVisible}
         />
       )}
-    </div>
+    </Tooltip>
   );
-}
+};

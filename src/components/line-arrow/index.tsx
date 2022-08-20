@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Xarrow from "react-xarrows";
-import "./line-arrow.sass";
-import ArrowTooltip from "./arrow-tooltip";
-import { horizontalProcess } from "tt-ducks/app";
+// import "./line-arrow.sass";
+import { ArrowTooltip } from "./arrow-tooltip";
+import {xarrowPropsType} from "react-xarrows/lib/types";
+
+export interface LineArrowProps extends xarrowPropsType {
+  type: string,
+  item, setSelected, selected, horizontalProcess
+}
 
 export const ARROW_TYPE = {
   DEFAULT: "DEFAULT",
@@ -29,7 +34,7 @@ const COLORS = {
   },
 };
 
-export default (props) => {
+export const LineArrow = (props) => {
   const { type, item, setSelected, selected, horizontalProcess } = props;
 
   const [color, setColor] = useState("transparent"),

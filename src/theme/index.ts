@@ -17,6 +17,7 @@ export interface Color {
   brightRed: string;
   green: string;
   blue: string;
+  conditionBlue: string;
   yellow: string;
 
   schemaBG: string;
@@ -46,6 +47,7 @@ export const main: Theme = {
     brightRed: "#E80000",
     green: "#43A047",
     blue: "#2979FF",
+    conditionBlue: "#002C9D",
     yellow: "#F1A205",
 
     schemaBG: "#c4c4c433",
