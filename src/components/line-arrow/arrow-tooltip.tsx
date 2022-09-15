@@ -5,9 +5,9 @@ import { Tooltip, TooltipButton } from "./styled";
 
 export interface ArrowTooltipProps extends HTMLAttributes<HTMLDivElement> {
   onDeleteArrow: () => void;
-  onApplyCondition: (value: string) => void;
+  onApplyCondition: (value: string | null) => void;
   hasCondition: boolean;
-  condition: string;
+  condition: string | null;
   disabled: boolean;
 }
 
@@ -24,7 +24,7 @@ export const ArrowTooltip = ({
     if (!disabled) setEditorVisible(!editorVisible);
   };
 
-  const handleApplyCondition = (value: string) => {
+  const handleApplyCondition = (value: string | null) => {
     onApplyCondition(value);
     setEditorVisible(false);
   };

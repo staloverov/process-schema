@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import Xarrow from "react-xarrows";
+import Xarrow, { xarrowPropsType } from "react-xarrows";
 // import "./line-arrow.sass";
 import { ArrowTooltip } from "./arrow-tooltip";
-import {xarrowPropsType} from "react-xarrows/lib/types";
+import type { Arrow, ArrowDbInfo } from "#src/@types/arrow";
 
 export interface LineArrowProps extends xarrowPropsType {
-  type: string,
-  item, setSelected, selected, horizontalProcess
+  type: string;
+  item: Arrow;
+  setSelected: (value: number | null) => void;
+  selected: number;
+  horizontalProcess: boolean;
+  onDeleteArrow?: (item: Arrow) => void;
+  onUpdateArrow?: (item: ArrowDbInfo) => void;
 }
 
 export const ARROW_TYPE = {
@@ -34,9 +39,16 @@ const COLORS = {
   },
 };
 
-export const LineArrow = (props) => {
-  const { type, item, setSelected, selected, horizontalProcess } = props;
-
+export const LineArrow = ({
+  type,
+  item,
+  setSelected,
+  selected,
+  horizontalProcess,
+  onDeleteArrow,
+  onUpdateArrow,
+  ...props
+}: LineArrowProps) => {
   const [color, setColor] = useState("transparent"),
     [strokeWidth, setStrokeWidth] = useState(2),
     [headSize, setHeadSize] = useState(6),
@@ -80,13 +92,11 @@ export const LineArrow = (props) => {
   }, []);
 
   const deleteArrow = useCallback(() => {
-    if (props.onDeleteArrow) {
-      props.onDeleteArrow(item);
-    }
+    onDeleteArrow?.(item);
   }, []);
 
-  const changeCondition = useCallback((value) => {
-    if (props.onUpdateArrow) {
+  const changeCondition = useCallback((value: string | null) => {
+    if (onUpdateArrow) {
       const newValue = {
         Id: item.id,
         DepTaskId: item.from,
@@ -96,7 +106,7 @@ export const LineArrow = (props) => {
         IsActive: !item.disabled,
       };
 
-      props.onUpdateArrow(newValue);
+      onUpdateArrow(newValue);
       setSelected(null);
     }
   }, []);
@@ -116,7 +126,7 @@ export const LineArrow = (props) => {
             />
           ),
         }
-      : null;
+      : "";
   }, [selected]);
 
   const bringToFront =

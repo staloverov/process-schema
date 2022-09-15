@@ -7,14 +7,14 @@ import {
 } from "#src/components/line-arrow/styled";
 
 export interface ConditionEditorProps extends HTMLAttributes<HTMLDivElement> {
-  value: string;
-  onApply: (value: string) => void;
+  value: string | null;
+  onApply: (value: string | null) => void;
   onClose: () => void;
 }
 
 export const ConditionEditor = forwardRef<HTMLDivElement, ConditionEditorProps>(
   ({ value, onApply, onClose, ...props }: ConditionEditorProps, ref) => {
-    const [myValue, setMyValue] = useState<string>(value);
+    const [myValue, setMyValue] = useState<string | null>(value);
 
     useEffect(() => {
       setMyValue(value);

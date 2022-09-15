@@ -1,13 +1,16 @@
-import React, { ButtonHTMLAttributes, forwardRef } from 'react';
-import styled from 'styled-components';
+import React, { ButtonHTMLAttributes, forwardRef } from "react";
+import styled from "styled-components";
 
-type ButtonAppearance = 'primary' | 'secondary';
-type ButtonDimension = 's' | 'l';
+type ButtonAppearance = "primary" | "secondary";
+type ButtonDimension = "s" | "l";
 
-const StyledButton = styled.button<{ appearance?: ButtonAppearance, dimension?: ButtonDimension }>`
+const StyledButton = styled.button<{
+  appearance?: ButtonAppearance;
+  dimension?: ButtonDimension;
+}>`
   padding: 16px;
   border-radius: 8px;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 600;
   font-size: 14px;
@@ -17,44 +20,53 @@ const StyledButton = styled.button<{ appearance?: ButtonAppearance, dimension?: 
   letter-spacing: 0.75px;
 
   transition: opacity, background-color, border 300ms ease;
-  color: ${({ appearance }) => (appearance === 'primary' ? '#FFFFFF' : '#19191D')};
+  color: ${({ appearance }) =>
+    appearance === "primary" ? "#FFFFFF" : "#19191D"};
   border: 1px solid transparent;
-  
-  background-color: ${({ appearance }) => (appearance === 'primary' ? '#C8684C' : '#E5E5E7')};
+
+  background-color: ${({ appearance }) =>
+    appearance === "primary" ? "#C8684C" : "#E5E5E7"};
   &:disabled {
-    opacity: .5;
+    opacity: 0.5;
   }
-  
+
   &:hover {
-    background-color: ${({ appearance }) => (appearance === 'primary' ? '#DC775A' : '#D2D2D6')};
-    box-shadow: 0 2px 10px #9696A0
+    background-color: ${({ appearance }) =>
+      appearance === "primary" ? "#DC775A" : "#D2D2D6"};
+    box-shadow: 0 2px 10px #9696a0;
   }
-  
+
   &:active {
-    border-color: ${({ appearance }) => (appearance === 'primary' ? '#C8372D' : '#787885')};
+    border-color: ${({ appearance }) =>
+      appearance === "primary" ? "#C8372D" : "#787885"};
     box-shadow: none;
   }
 `;
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   appearance?: ButtonAppearance;
-  dimension?: 's' | 'l';
+  dimension?: "s" | "l";
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
-  appearance = 'primary',
-  dimension = 'l',
-  // type = 'button',
-  children,
-  ...props
-}, ref) => (
-  <StyledButton
-    type="button"
-    appearance={appearance}
-    dimension={dimension}
-    ref={ref}
-    {...props}
-  >
-    {children}
-  </StyledButton>
-));
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      appearance = "primary",
+      dimension = "l",
+      // type = 'button',
+      children,
+      ...props
+    },
+    ref
+  ) => (
+    <StyledButton
+      type="button"
+      appearance={appearance}
+      dimension={dimension}
+      ref={ref}
+      {...props}
+    >
+      {children}
+    </StyledButton>
+  )
+);
