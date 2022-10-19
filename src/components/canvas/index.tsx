@@ -1,4 +1,10 @@
-import React, {forwardRef, HTMLAttributes, useMemo, useRef, useState} from "react";
+import React, {
+  forwardRef,
+  HTMLAttributes,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Xwrapper } from "react-xarrows";
 import assignRef from "#src/components/assignRef";
 import { Background, Canvas } from "#src/components/canvas/styled";
@@ -11,10 +17,14 @@ export interface SchemaProps extends HTMLAttributes<HTMLDivElement> {
   rowCount: number;
   colCount: number;
   nodes: Array<ProcessNode>;
-    actionMenuTaskId: number;
-    activeTaskId?: number;
+  actionMenuTaskId: number;
+  activeTaskId?: number;
 
-    onActivateTask?: (id: number) => void;
+  onActivateTask?: (id: number) => void;
+  onEditTask?: (id: number) => void;
+  onEditTaskLinks?: (id: number) => void;
+  onAddTask?: (id: number) => void;
+  onDeleteTask?: (id: number) => void;
 }
 
 export const Schema = forwardRef<HTMLDivElement, SchemaProps>(
@@ -25,51 +35,74 @@ export const Schema = forwardRef<HTMLDivElement, SchemaProps>(
       colCount,
       nodes,
       activeTaskId,
-        actionMenuTaskId,
-        onActivateTask,
+      actionMenuTaskId,
+      onActivateTask,
+      onEditTask,
+      onEditTaskLinks,
+      onAddTask,
+      onDeleteTask,
       ...props
     }: SchemaProps,
     ref
   ) => {
-      const [activeTask, setActiveTask] = useState<number | undefined>(activeTaskId);
+    const [activeTask, setActiveTask] = useState<number | undefined>(
+      activeTaskId
+    );
     const canvasRef = useRef<HTMLDivElement>(null);
 
     const handleSelectNode = (id: number) => {
-        if (activeTask !== id) {
-            setActiveTask(id);
-            onActivateTask?.(id);
-        }
-    }
+      if (activeTask !== id) {
+        setActiveTask(id);
+        onActivateTask?.(id);
+      }
+    };
 
-    const handleMenuButtonClick = () => {}
+    const handleMenuButtonClick = (id: number) => {
+      if (activeTask !== id) setActiveTask(id);
+    };
+
+    const handleEditTask = (id: number) => {
+      onEditTask?.(id);
+    };
+
+    const handleEditTaskLinks = (id: number) => {
+      onEditTaskLinks?.(id);
+    };
+
+    const handleDeleteTask = (id: number) => {
+      onDeleteTask?.(id);
+    };
+
+    const handleAddTask = (id: number) => {
+      onAddTask?.(id);
+    };
 
     const tasks = useMemo(() => {
-        return nodes.map((node) => {
-            const isRight = horizontalProcess
-                    ? node.weight === colCount - 1
-                    : node.rowNumber === rowCount - 1;
+      return nodes.map((node) => {
+        const isRight = horizontalProcess
+          ? node.weight === colCount - 1
+          : node.rowNumber === rowCount - 1;
 
-            return (
-                <SchemaTask
-                    node={node}
-                    active={activeTask === node.id}
-                    horizontalProcess={horizontalProcess}
-                    onSelectNode={handleSelectNode}
-                    menuTaskId={actionMenuTaskId}
-                    onEdit={editTask}
-                    onEditLinks={editTaskLinks}
-                    onDelete={deleteTask}
-                    onMenuButtonClick={onMenuButtonClick}
-                    onChangeTaskAuto={changeTaskAuto}
-                    onChangeTaskFinal={changeTaskFinal}
-                    onAddNewTask={addTaskWithLink}
-                    isLast={isRight}
-                    key={node.id}
-                />
-        })
-
-
-    }, [nodes])
+        return (
+          <SchemaTask
+            node={node}
+            active={activeTask === node.id}
+            horizontalProcess={horizontalProcess}
+            onSelectNode={handleSelectNode}
+            menuTaskId={actionMenuTaskId}
+            onEdit={handleEditTask}
+            onEditLinks={handleEditTaskLinks}
+            onDelete={handleDeleteTask}
+            onMenuButtonClick={handleMenuButtonClick}
+            // onChangeTaskAuto={changeTaskAuto}
+            // onChangeTaskFinal={changeTaskFinal}
+            onAddNewTask={handleAddTask}
+            isLast={isRight}
+            key={node.id}
+          />
+        );
+      });
+    }, [nodes]);
 
     return (
       <Xwrapper>
@@ -79,7 +112,7 @@ export const Schema = forwardRef<HTMLDivElement, SchemaProps>(
             rowCount={rowCount}
             columnCount={colCount}
           >
-            {taskCells}
+            {tasks}
             {arrows}
           </Canvas>
         </Background>
